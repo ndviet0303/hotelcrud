@@ -35,12 +35,28 @@ class BookingController extends Controller
             'check_in' => 'required|date',
             'check_out' => 'required|date|after:check_in',
         ]);
+        // Kiểm tra phòng còn trống không
+        $exists = \App\Models\Booking::where('room_id', $data['room_id'])
+            ->where('status', '!=', 'cancelled')
+            ->where('status', '!=', 'checked_out')
+            ->where(function ($q) use ($data) {
+                $q->whereBetween('check_in', [$data['check_in'], $data['check_out']])
+                    ->orWhereBetween('check_out', [$data['check_in'], $data['check_out']])
+                    ->orWhere(function ($q2) use ($data) {
+                        $q2->where('check_in', '<=', $data['check_in'])
+                            ->where('check_out', '>=', $data['check_out']);
+                    });
+            })
+            ->exists();
+        if ($exists) {
+            return back()->withErrors(['check_in' => 'Phòng đã có người đặt trong khoảng thời gian này!'])->withInput();
+        }
         $data['customer_name'] = Auth::user()->name;
         $data['customer_username'] = Auth::user()->username;
         $data['user_id'] = Auth::id();
         $data['status'] = 'pending';
         $booking = Booking::create($data);
-        return redirect()->route('bookings.my')->with('success', 'Đặt phòng thành công! Mã Phòng Đặt Phòng: ' . $booking['id']);
+        return redirect()->route('bookings.my')->with('success', 'Đặt phòng thành công! Mã đặt phòng của bạn là: ' . $booking->id);
     }
 
     /**
