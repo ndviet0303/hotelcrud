@@ -7,15 +7,27 @@
                 @csrf
                 <div class="mb-3">
                     <label for="name" class="form-label">Họ tên</label>
-                    <input type="text" class="form-control" id="name" name="name" required>
+                    <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name"
+                        value="{{ old('name') }}" required>
+                    @error('name')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
                 <div class="mb-3">
                     <label for="username" class="form-label">Tên đăng nhập</label>
-                    <input type="text" class="form-control" id="username" name="username" required>
+                    <input type="text" class="form-control @error('username') is-invalid @enderror" id="username"
+                        name="username" value="{{ old('username') }}" required>
+                    @error('username')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
                 <div class="mb-3">
                     <label for="password" class="form-label">Mật khẩu</label>
-                    <input type="password" class="form-control" id="password" name="password" required>
+                    <input type="password" class="form-control @error('password') is-invalid @enderror" id="password"
+                        name="password" required>
+                    @error('password')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
                 </div>
                 <div class="mb-3">
                     <label for="password_confirmation" class="form-label">Xác nhận mật khẩu</label>
