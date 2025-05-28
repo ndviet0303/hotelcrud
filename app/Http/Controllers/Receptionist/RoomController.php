@@ -16,23 +16,19 @@ class RoomController extends Controller
     {
         if ($request->filled('search')) {
             $search = $request->search;
-            $rooms = Room::with([
-                'bookings' => function ($q) {
-                    $q->whereIn('status', ['checked_in', 'booked']);
-                }
-            ])
-                ->whereHas('bookings', function ($q) use ($search) {
-                    $q->where('id', 'like', "%$search%");
-                })
-                ->paginate(12);
+            $ids = collect(explode(',', $search))->map(fn($id) => trim($id))->filter()->all();
+
+            $bookings = Booking::with('room')
+                ->whereIn('id', $ids)
+                ->get();
         } else {
-            // Lấy các phòng có booking đang checked_in hoặc booked
-            $rooms = Room::whereHas('bookings', function ($q) {
-                $q->whereIn('status', ['checked_in', 'booked']);
-            })->paginate(12);
+            // Lấy các booking đang checked_in hoặc booked
+            $bookings = Booking::with('room')
+                ->whereIn('status', ['checked_in', 'booked'])
+                ->get();
 
         }
-        return view('receptionist.rooms', compact('rooms'));
+        return view('receptionist.rooms', compact('bookings'));
     }
 
     /**

@@ -8,22 +8,16 @@
         </div>
     </form>
     <div class="row">
-        @foreach($rooms as $room)
+        @foreach($bookings as $booking)
             <div class="col-md-2 mb-4">
                 <div class="card h-100">
-                    <img src="{{ $room->image }}" class="card-img-top" alt="Hình ảnh phòng">
                     <div class="card-body text-center">
-                        <h6 class="card-title">{{ $room->name }}</h6>
-                        @php
-                            $activeBooking = $room->bookings()->whereIn('status', ['checked_in', 'booked'])->latest()->first();
-                        @endphp
-                        @if($activeBooking)
-                            <div class="mb-2">
-                                <span class="badge bg-info">Mã đặt phòng: {{ $activeBooking->id }}</span>
-                            </div>
-                        @endif
-                        <a href="{{ route('receptionist.rooms.show', $room->id) }}"
-                            class="btn btn-outline-info btn-sm mt-2">Quản lý</a>
+                        <h6 class="card-title">{{ $booking->room->name }}</h6>
+                        <div class="mb-2">
+                            <span class="badge bg-info">Mã đặt phòng: {{ $booking->id }}</span>
+                            <a href="{{ route('receptionist.rooms.show', $booking->room->id) }}"
+                                class="btn btn-outline-info btn-sm mt-2">Quản lý</a>
+                        </div>
                     </div>
                 </div>
             </div>
