@@ -49,9 +49,30 @@
                     </div>
                 @endforeach
             </div>
-            <div class="mt-3">
-                {{ $rooms->withQueryString()->links() }}
+            <div class="d-flex justify-content-center mt-4">
+                {{ $rooms->links('pagination::bootstrap-5') }}
             </div>
         </div>
     </div>
+    <style>
+        .pagination {
+            margin-bottom: 0;
+        }
+
+        .pagination .page-item .page-link {
+            color: #0d6efd;
+            border: 1px solid #dee2e6;
+            padding: 0.5rem 0.75rem;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            color: white;
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+        }
+    </style>
 @endsection

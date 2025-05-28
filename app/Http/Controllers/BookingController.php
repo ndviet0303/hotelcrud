@@ -39,7 +39,7 @@ class BookingController extends Controller
         $exists = \App\Models\Booking::where('room_id', $data['room_id'])
             ->where('status', '!=', 'cancelled')
             ->where('status', '!=', 'checked_out')
-            ->where(function ($q) use ($data) {
+            ->where(function (Booking $q) use ($data) {
                 $q->whereBetween('check_in', [$data['check_in'], $data['check_out']])
                     ->orWhereBetween('check_out', [$data['check_in'], $data['check_out']])
                     ->orWhere(function ($q2) use ($data) {
@@ -100,5 +100,35 @@ class BookingController extends Controller
     {
         $bookings = Booking::where('user_id', Auth::id())->with('room')->latest()->get();
         return view('bookings.my_bookings', compact('bookings'));
+    }
+
+    public function checkin(Booking $booking)
+    {
+        if ($booking->status !== 'pending') {
+            return back()->with('error', 'Không thể check-in phòng này!');
+        }
+
+        $booking->update(['status' => 'checked_in']);
+        return redirect()->route('receptionist.rooms.index')->with('success', 'Check-in thành công!');
+    }
+
+    public function checkout(Booking $booking)
+    {
+        if ($booking->status !== 'checked_in') {
+            return back()->with('error', 'Không thể check-out phòng này!');
+        }
+
+        $booking->update(['status' => 'checked_out']);
+        return redirect()->route('receptionist.rooms.index')->with('success', 'Check-out thành công!');
+    }
+
+    public function cancel(Booking $booking)
+    {
+        if ($booking->status !== 'pending') {
+            return back()->with('error', 'Không thể hủy đặt phòng này!');
+        }
+
+        $booking->update(['status' => 'cancelled']);
+        return redirect()->route('bookings.my')->with('success', 'Hủy đặt phòng thành công!');
     }
 }
