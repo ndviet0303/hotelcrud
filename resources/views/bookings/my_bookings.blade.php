@@ -1,9 +1,5 @@
 @extends('layouts.app')
 @section('content')
-    <h3 class="mb-4">Đặt phòng của tôi</h3>
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
     <table class="table table-bordered">
         <thead>
             <tr>

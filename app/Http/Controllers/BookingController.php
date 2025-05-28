@@ -39,7 +39,7 @@ class BookingController extends Controller
         $exists = \App\Models\Booking::where('room_id', $data['room_id'])
             ->where('status', '!=', 'cancelled')
             ->where('status', '!=', 'checked_out')
-            ->where(function (Booking $q) use ($data) {
+            ->where(function ($q) use ($data) {
                 $q->whereBetween('check_in', [$data['check_in'], $data['check_out']])
                     ->orWhereBetween('check_out', [$data['check_in'], $data['check_out']])
                     ->orWhere(function ($q2) use ($data) {
