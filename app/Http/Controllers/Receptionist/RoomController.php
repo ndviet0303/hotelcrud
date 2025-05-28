@@ -12,12 +12,26 @@ class RoomController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Lấy các phòng có booking đang checked_in hoặc booked
-        $rooms = Room::whereHas('bookings', function ($q) {
-            $q->whereIn('status', ['checked_in', 'booked']);
-        })->paginate(12);
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $rooms = Room::with([
+                'bookings' => function ($q) {
+                    $q->whereIn('status', ['checked_in', 'booked']);
+                }
+            ])
+                ->whereHas('bookings', function ($q) use ($search) {
+                    $q->where('id', 'like', "%$search%");
+                })
+                ->paginate(12);
+        } else {
+            // Lấy các phòng có booking đang checked_in hoặc booked
+            $rooms = Room::whereHas('bookings', function ($q) {
+                $q->whereIn('status', ['checked_in', 'booked']);
+            })->paginate(12);
+
+        }
         return view('receptionist.rooms', compact('rooms'));
     }
 

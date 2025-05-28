@@ -12,7 +12,7 @@
                             <label for="booking_code" class="form-label">Mã đặt phòng</label>
                             <input type="text" class="form-control" id="booking_code" name="booking_code" required>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100">Tìm kiếm</button>
+                        <button type="submit" class="btn btn-primary w-100">Check In</button>
                     </form>
                 </div>
             </div>
