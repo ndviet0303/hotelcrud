@@ -16,19 +16,31 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $credentials = $request->validate([
-            'username' => 'required',
-            'password' => 'required'
-        ]);
+        try {
+            $credentials = $request->validate([
+                'username' => 'required',
+                'password' => 'required'
+            ], [
+                'username.required' => 'Vui lòng nhập tên đăng nhập!',
+                'password.required' => 'Vui lòng nhập mật khẩu!'
+            ]);
 
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            return redirect()->intended('/')->with('success', 'Đăng nhập thành công!');
+            if (Auth::attempt($credentials)) {
+                $request->session()->regenerate();
+                return redirect()->intended('/')->with('success', 'Đăng nhập thành công! Chào mừng ' . Auth::user()->name . ' quay trở lại!');
+            }
+
+            return back()
+                ->withErrors([
+                    'username' => 'Tên đăng nhập hoặc mật khẩu không chính xác!',
+                ])
+                ->withInput()
+                ->with('error', 'Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin.');
+        } catch (\Exception $e) {
+            return back()
+                ->with('error', 'Có lỗi xảy ra khi đăng nhập. Vui lòng thử lại!')
+                ->withInput();
         }
-
-        return back()->withErrors([
-            'username' => 'Thông tin đăng nhập không chính xác.',
-        ])->withInput();
     }
 
     public function showRegister()
